@@ -10,6 +10,9 @@ import { Principal } from 'app/core';
 import { ITEMS_PER_PAGE } from 'app/shared';
 import { BlogService } from './blog.service';
 
+import { Observable } from 'rxjs';
+import { NgForm } from '@angular/forms';
+
 @Component({
     selector: 'jhi-blog',
     templateUrl: './blog.component.html'
@@ -29,6 +32,8 @@ export class BlogComponent implements OnInit, OnDestroy {
     predicate: any;
     previousPage: any;
     reverse: any;
+    private _blog: IBlog;
+    isSaving: boolean;
 
     constructor(
         private blogService: BlogService,
@@ -97,6 +102,8 @@ export class BlogComponent implements OnInit, OnDestroy {
             this.currentAccount = account;
         });
         this.registerChangeInBlogs();
+        this.isSaving = false;
+        this.blog = new Object();
     }
 
     ngOnDestroy() {
@@ -128,5 +135,38 @@ export class BlogComponent implements OnInit, OnDestroy {
 
     private onError(errorMessage: string) {
         this.jhiAlertService.error(errorMessage, null, null);
+    }
+
+    previousState() {
+        window.history.back();
+    }
+
+    save(form: NgForm) {
+        this.isSaving = true;
+        if (this.blog.id !== undefined) {
+            this.subscribeToSaveResponse(this.blogService.update(this.blog));
+        } else {
+            this.subscribeToSaveResponse(this.blogService.create(this.blog));
+        }
+    }
+
+    private subscribeToSaveResponse(result: Observable<HttpResponse<IBlog>>) {
+        result.subscribe((res: HttpResponse<IBlog>) => this.onSaveSuccess(), (res: HttpErrorResponse) => this.onSaveError());
+    }
+
+    private onSaveSuccess() {
+        this.isSaving = false;
+        this.loadAll();
+    }
+
+    private onSaveError() {
+        this.isSaving = false;
+    }
+    get blog() {
+        return this._blog;
+    }
+
+    set blog(blog: IBlog) {
+        this._blog = blog;
     }
 }

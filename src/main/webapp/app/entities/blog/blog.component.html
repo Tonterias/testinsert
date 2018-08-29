@@ -59,10 +59,9 @@
             <ngb-pagination [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
         </div>
     </div>
-    
-    
-    
-    <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
+
+	<div>		 
+		  <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
             <h2 id="jhi-blog-heading">Create or edit a Blog</h2>
             <div>
                 <jhi-alert-error></jhi-alert-error>
@@ -101,4 +100,5 @@
                 </button>
             </div>
         </form>
+	</div>
 </div>
